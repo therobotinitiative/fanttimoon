@@ -1,0 +1,24 @@
+services:
+  fanttidb:
+    image: postgres:16-alpine
+    container_name: fantti-moon
+    restart: unless-stopped
+    ports:
+      - "${FANTTIMOON_PORT}:5432"
+    environment:
+      - POSTGRES_DB=${FANTTIMOON_DB_NAME}
+      - POSTGRES_USER=${FANTTIMOON_DB_USER}
+      - POSTGRES_PASSWORD_FILE=/run/secrets/password.secret
+    volumes:
+      - ${FANTTIMOON_STORAGE_DIR}:/var/lib/postgresql/data
+    secrets:
+      - password.secret
+    networks:
+      - moon-network
+secrets:
+  password.secret:
+    file: ./${FANTTIMOON_SECRET_FILE}
+networks:
+  moon-network:
+    name: codebreaker-global
+    external: true
